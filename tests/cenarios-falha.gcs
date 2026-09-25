@@ -1,0 +1,40 @@
+# Cenários de falha esperados — cada linha abaixo deve retornar [ERRO]/[ACESSO NEGADO]
+# Executar com: npm run test:falhas
+
+provisionar --login admin --senha SenhaAdmin123!
+login --login admin --senha SenhaAdmin123!
+usuario criar --login carla.cadastro --senha SenhaCarla123! --papel operador_cadastro
+usuario criar --login gil.almox --senha SenhaGil123! --papel gestor_almoxarifado
+
+login --login carla.cadastro --senha SenhaCarla123!
+org criar --codigo BR001 --cnpj 11222333000181 --razao "Banco Exemplo S.A." --contrato C-0
+
+# 1) CNPJ invalido (digito verificador errado)
+login --login carla.cadastro --senha SenhaCarla123!
+org criar --codigo BR002 --cnpj 11222333000199 --razao "Empresa X" --contrato C-1
+
+# 2) Operador de cadastro tentando comando de almoxarifado (acesso negado)
+lote criar --codigo LOTE-9999 --org BR002 --nf 1 --transp X
+
+# 3) Gestor tentando criar organizacao com dados validos porem sem permissao
+login --login gil.almox --senha SenhaGil123!
+org criar --codigo BR003 --cnpj 11222333000181 --razao "Empresa Y" --contrato C-2
+
+# 4) Lote referenciando organizacao inexistente
+lote criar --codigo LOTE-0002 --org NAOEXISTE --nf 1 --transp X
+
+# 5) Equipamento indo direto para desmonte sem triagem completa
+lote criar --codigo LOTE-0003 --org BR001 --nf 999 --transp TransRapida
+equipamento cadastrar --codigo EQP-9001 --lote LOTE-0003 --tipo notebook --estado usado_bom
+equipamento desmonte --codigo EQP-9001
+
+# 6) Queda de 2+ categorias de estado fisico sem justificativa
+equipamento estado --codigo EQP-9001 --estado sucata
+
+# 7) Login com senha errada
+login --login gil.almox --senha SenhaErrada000
+
+# 8) Senha curta ao criar usuario (< 8 caracteres)
+login --login admin --senha SenhaAdmin123!
+usuario criar --login teste.curto --senha 123 --papel auditor
+sair

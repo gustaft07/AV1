@@ -1,0 +1,29 @@
+# Jornada completa: provisionamento -> cadastros -> triagem -> desmonte -> rastreabilidade
+# Executar com: npm run test:jornada
+
+provisionar --login admin --senha SenhaAdmin123!
+login --login admin --senha SenhaAdmin123!
+
+usuario criar --login carla.cadastro --senha SenhaCarla123! --papel operador_cadastro
+usuario criar --login gil.almox --senha SenhaGil123! --papel gestor_almoxarifado
+usuario criar --login ana.auditora --senha SenhaAna123! --papel auditor
+usuario listar
+
+login --login carla.cadastro --senha SenhaCarla123!
+org criar --codigo BR001 --cnpj 11222333000181 --razao "Banco Exemplo S.A." --contrato "Contrato-2026-001"
+org listar
+
+login --login gil.almox --senha SenhaGil123!
+lote criar --codigo LOTE-0001 --org BR001 --nf 123456 --transp TransRapida
+equipamento cadastrar --codigo EQP-0001 --lote LOTE-0001 --tipo terminal --estado usado_bom
+equipamento triagem --codigo EQP-0001
+equipamento triagem --codigo EQP-0001
+equipamento estado --codigo EQP-0001 --estado usado_regular
+equipamento estado --codigo EQP-0001 --estado sucata --justificativa "Placa-mae com curto identificado na triagem"
+equipamento desmonte --codigo EQP-0001
+equipamento listar
+
+login --login ana.auditora --senha SenhaAna123!
+equipamento rastreabilidade --codigo EQP-0001
+relatorio journal --limite 30
+sair
