@@ -12,7 +12,7 @@ relacional — ver seção **"Evolução futura"**.
 
 ## Sumário
 
-- [Instalação e execução](#instalação-e-execução) — veja também `INSTALL.md`
+- [Instalação e execução](#instalação-e-execução)
 - [Arquitetura geral](#arquitetura-geral)
 - [Arquitetura de segurança](#arquitetura-de-segurança) (justificativas exigidas pelo enunciado)
 - [Papéis e permissões](#papéis-e-permissões)
